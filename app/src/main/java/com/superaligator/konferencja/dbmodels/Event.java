@@ -1,12 +1,15 @@
 package com.superaligator.konferencja.dbmodels;
 
+import android.database.Cursor;
 import android.util.Log;
 
+import com.activeandroid.Cache;
 import com.activeandroid.Model;
 import com.activeandroid.annotation.Column;
 import com.activeandroid.annotation.Table;
 import com.activeandroid.query.Delete;
 import com.activeandroid.query.Select;
+import com.superaligator.konferencja.interfaces.SynchoEventsListener;
 import com.superaligator.konferencja.BuildConfig;
 import com.superaligator.konferencja.definitions.EventType;
 import com.superaligator.konferencja.models.EventsResponse;
@@ -36,7 +39,7 @@ public class Event extends Model {
     @Column(name = "accessCode")
     public String accessCode;
 
-    public static void synchroEvents(EventsResponse eventsResponse) {
+    public static void synchroEvents(EventsResponse eventsResponse, SynchoEventsListener listener) {
         List<String> exists = new ArrayList<>();
         for (EventsResponse.RawEvent rawEvent : eventsResponse.events) {
             Event ev = findByEventId(rawEvent.eventId);
@@ -58,6 +61,9 @@ public class Event extends Model {
                 Log.w("x", "Jest eventId:" + el.eventId);
             }
         }
+
+        if (listener != null)
+            listener.OnSynchroEnd();
     }
 
     public static Event newEvent(EventsResponse.RawEvent rawEvent) {
@@ -90,5 +96,12 @@ public class Event extends Model {
         return new Select()
                 .from(Event.class)
                 .execute();
+    }
+
+    public static Cursor fetchResultCursor() {
+        String tableName = Cache.getTableInfo(Event.class).getTableName();
+        String resultRecords = new Select(tableName + ".*, " + tableName + ".Id as _id").from(Event.class).toSql();
+        Cursor resultCursor = Cache.openDatabase().rawQuery(resultRecords, null);
+        return resultCursor;
     }
 }

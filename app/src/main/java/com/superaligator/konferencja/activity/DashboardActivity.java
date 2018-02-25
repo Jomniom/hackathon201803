@@ -1,13 +1,18 @@
 package com.superaligator.konferencja.activity;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.ListView;
 
 import com.superaligator.konferencja.R;
+import com.superaligator.konferencja.adapters.EventsAdapter;
 import com.superaligator.konferencja.dbmodels.Event;
+import com.superaligator.konferencja.interfaces.SynchoEventsListener;
 import com.superaligator.konferencja.models.EventsResponse;
 import com.superaligator.konferencja.network.Comunicator;
 
@@ -18,15 +23,16 @@ import retrofit2.Response;
 /***
  * - lista wydarzeń: historyczne, oferowane, moje
  *
- * - rejestracja wydarzenia
  * - pobranie danych wydarzenia: informacje, materiały, konkursy,
  *  zadawanie pytań, głosowania uchwał
  * - generowanie qrkoda
  */
 
-public class DashboardActivity extends BaseUserActivity {
+public class DashboardActivity extends BaseUserActivity implements AdapterView.OnItemClickListener {
 
     Call<EventsResponse> eventsCall;
+    ListView listView;
+    EventsAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +47,14 @@ public class DashboardActivity extends BaseUserActivity {
                 startActivity(intent);
             }
         });
+
+        Cursor cursor = Event.fetchResultCursor();
+        adapter = new EventsAdapter(this, cursor);
+
+        listView = findViewById(R.id.listView);
+        listView.setClickable(true);
+        listView.setOnItemClickListener(this);
+        listView.setAdapter(adapter);
 
         updateEvents();
     }
@@ -69,7 +83,12 @@ public class DashboardActivity extends BaseUserActivity {
                     return;
                 }
                 Log.w("x", "liczba pobranych wydarzeń: " + response.body().events.size());
-                Event.synchroEvents(response.body());
+                Event.synchroEvents(response.body(), new SynchoEventsListener() {
+                    @Override
+                    public void OnSynchroEnd() {
+                        DashboardActivity.this.refreshList();
+                    }
+                });
             }
 
             @Override
@@ -83,5 +102,21 @@ public class DashboardActivity extends BaseUserActivity {
                 }
             }
         });
+    }
+
+    void refreshList() {
+        if (adapter == null)
+            return;
+        Cursor cursor = Event.fetchResultCursor();
+        adapter.changeDate(cursor);
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+        String eventId = ((EventsAdapter.ViewHolder) view.getTag()).eventId;
+        Intent intent = new Intent(this, EventActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.putExtra(EventActivity.EXTRA_EVENT_ID, eventId);
+        startActivity(intent);
     }
 }

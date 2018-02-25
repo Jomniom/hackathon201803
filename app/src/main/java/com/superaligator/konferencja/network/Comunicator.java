@@ -3,7 +3,9 @@ package com.superaligator.konferencja.network;
 import com.superaligator.konferencja.Config;
 import com.superaligator.konferencja.managers.UserManager;
 import com.superaligator.konferencja.utils.OtherUtils;
+
 import java.io.IOException;
+
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -15,7 +17,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class Comunicator {
     public static final String KEY_HEADER_X_APP = "x-y";
     public static String APP_KEY = "";
-    public static final int[] APP_ASCCII_KEY = {34,78,45,54,32,32};
+    public static final int[] APP_ASCCII_KEY = {34, 78, 45, 54, 32, 32};
     private static Comunicator ourInstance = new Comunicator();
     private Retrofit retrofit;
     private RestApi service;
@@ -46,6 +48,11 @@ public class Comunicator {
         loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         clientBuilder.addInterceptor(loggingInterceptor);
 
+        /**
+         * Response interceptor
+         */
+        clientBuilder.addInterceptor(new ResponceInterceptor());
+
         retrofit = new Retrofit.Builder()
                 .baseUrl(Config.BASE_URL)
                 .client(clientBuilder.build())
@@ -62,18 +69,9 @@ public class Comunicator {
     class HeaderInterceptor implements Interceptor {
         @Override
         public Response intercept(Chain chain) throws IOException {
-
-            /**
-             * User agent
-             */
-            String userAgent = prepareUserAgentName();
-            String xApp = OtherUtils.getXApp(userAgent);
-
             Request originalRequest = chain.request();
             Request.Builder newBuilder = originalRequest.newBuilder();
-            newBuilder.header("User-Agent", userAgent);
-            newBuilder.addHeader(KEY_HEADER_X_APP, xApp);
-            if(UserManager.getInstance().isLoggedIn()){
+            if (UserManager.getInstance().isLoggedIn()) {
                 newBuilder.addHeader("token", UserManager.getInstance().getApiKey());
                 newBuilder.addHeader("user_id", UserManager.getInstance().getUserId());
             }
@@ -83,7 +81,24 @@ public class Comunicator {
 
             return chain.proceed(newRequest);
         }
+    }
 
+    class ResponceInterceptor implements Interceptor {
 
+        @Override
+        public okhttp3.Response intercept(Chain chain) throws IOException {
+            Request request = chain.request();
+            okhttp3.Response response = chain.proceed(request);
+
+            /**
+             * logout by server
+             */
+            if (response.code() == 401) {
+                UserManager.getInstance().logout();
+                return response;
+            }
+
+            return response;
+        }
     }
 }
