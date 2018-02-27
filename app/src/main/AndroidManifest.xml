@@ -31,6 +31,9 @@
             android:noHistory="true"
             android:theme="@style/FullscreenTheme" />
         <activity android:name=".activity.QuizActivity"></activity>
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="72f97bef5037735b7587b231715cdc1861f6553a" />
     </application>
 
 </manifest>

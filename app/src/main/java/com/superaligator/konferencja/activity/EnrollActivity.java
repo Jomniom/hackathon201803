@@ -28,7 +28,9 @@ public class EnrollActivity extends BaseUserActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_enroll);
-
+        if (2 == 1) {
+            throw new IllegalStateException("krasz testowy");
+        }
         enrollFormLay = findViewById(R.id.enrollFormLay);
         enrollInfoLay = findViewById(R.id.enrollInfoLay);
         enrollInfoText = (TextView) findViewById(R.id.enrollInfoText);

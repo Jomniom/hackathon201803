@@ -6,6 +6,8 @@ import android.preference.PreferenceManager;
 import com.activeandroid.ActiveAndroid;
 import com.activeandroid.Configuration;
 import com.superaligator.konferencja.managers.UserManager;
+import com.crashlytics.android.Crashlytics;
+import io.fabric.sdk.android.Fabric;
 
 public class App extends android.app.Application {
     private static App sInstance;
@@ -17,6 +19,7 @@ public class App extends android.app.Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        Fabric.with(this, new Crashlytics());
         App.sInstance = this;
         UserManager.init(this);
         UserManager.getInstance().initDatabase();
