@@ -2,12 +2,20 @@ package com.superaligator.konferencja.managers;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Environment;
 import android.preference.PreferenceManager;
 
 import com.activeandroid.ActiveAndroid;
 import com.activeandroid.Configuration;
+import com.superaligator.konferencja.BuildConfig;
 import com.superaligator.konferencja.Config;
 import com.superaligator.konferencja.dbmodels.Event;
+import com.superaligator.konferencja.dbmodels.ChatQuestion;
+import com.superaligator.konferencja.models.Form;
+import com.superaligator.konferencja.models.FormAnswer;
+import com.superaligator.konferencja.models.FormQuestion;
+
+import java.io.File;
 
 public class UserManager {
     private Context ctx;
@@ -61,10 +69,17 @@ public class UserManager {
     private void switchDatabase(String userId) {
         if (isDbInitialize)
             ActiveAndroid.dispose();
+
+        String dbName = userId + ".db";
+        if (BuildConfig.DEBUG) {
+            File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+            dbName = path.getPath() + "/" + dbName;
+        }
+
         Configuration dbConfiguration = new Configuration.Builder(ctx)
-                .setModelClasses(Event.class)//manifest
+                .setModelClasses(Event.class, ChatQuestion.class, Form.class, FormQuestion.class, FormAnswer.class)//manifest
                 .setDatabaseVersion(Config.BD_VERSION)
-                .setDatabaseName(userId + ".db").create();
+                .setDatabaseName(dbName).create();
         ActiveAndroid.initialize(dbConfiguration);
         isDbInitialize = true;
 

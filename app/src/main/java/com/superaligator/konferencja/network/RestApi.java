@@ -1,12 +1,15 @@
 package com.superaligator.konferencja.network;
 
-import com.superaligator.konferencja.dbmodels.Event;
 import com.superaligator.konferencja.models.EnrollResponse;
 import com.superaligator.konferencja.models.EventsResponse;
+import com.superaligator.konferencja.models.Form;
 import com.superaligator.konferencja.models.LoginResponse;
 
 import retrofit2.Call;
+import retrofit2.http.Field;
+import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
+import retrofit2.http.Header;
 import retrofit2.http.POST;
 
 public interface RestApi {
@@ -18,11 +21,14 @@ public interface RestApi {
 
     @GET("register_event.php")
     Call<EnrollResponse> registerEvent();
-//    @FormUrlEncoded
-//    @POST("?c=services&m=regapp")
-//    Call<RegApp> register(@Field("appId") long appId, @Field("pushToken") String pushToken);
-//
-//    @FormUrlEncoded
-//    @POST("?c=services&m=send")
-//    Call<Void> sendMessage(@Field("appId") long appId, @Field("msg") String message);
+
+    @FormUrlEncoded
+    @POST("chat.php")
+    Call<Void> sendQuestion(@Field("message") String message, @Field("eventId") String eventId);
+
+    @GET("forms.php")
+    Call<Form> getForms(@Header("eventId") String eventId);
+
+//    @GET("forms.php/{eventId}")
+//    Call<Form> getForms(@Path("eventId") String eventId);
 }

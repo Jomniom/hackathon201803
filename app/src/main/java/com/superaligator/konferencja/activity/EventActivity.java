@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.superaligator.konferencja.InfoActivity;
 import com.superaligator.konferencja.R;
 import com.superaligator.konferencja.adapters.EventsAdapter;
 import com.superaligator.konferencja.dbmodels.Event;
@@ -38,6 +39,45 @@ public class EventActivity extends BaseUserActivity {
                 showCode();
             }
         });
+        ((Button) findViewById(R.id.button4)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showChat();
+            }
+        });
+        ((Button) findViewById(R.id.button8)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showInfo();
+            }
+        });
+        ((Button) findViewById(R.id.button6)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showForms();
+            }
+        });
+    }
+
+    private void showForms() {
+        Intent intent = new Intent(this, FormActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.putExtra(FormActivity.EXTRA_EVENT_ID, event.eventId);
+        startActivity(intent);
+    }
+
+    private void showInfo() {
+        Intent intent = new Intent(this, InfoActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.putExtra(InfoActivity.EXTRA_EVENT_ID, event.eventId);
+        startActivity(intent);
+    }
+
+    private void showChat() {
+        Intent intent = new Intent(this, ChatActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.putExtra(ChatActivity.EXTRA_EVENT_ID, event.eventId);
+        startActivity(intent);
     }
 
     private void showCode() {
