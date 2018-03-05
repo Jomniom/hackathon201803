@@ -1,5 +1,6 @@
 package com.superaligator.konferencja.network;
 
+import com.superaligator.konferencja.dbmodels.Quiz;
 import com.superaligator.konferencja.models.EnrollResponse;
 import com.superaligator.konferencja.models.EventsResponse;
 import com.superaligator.konferencja.models.Form;
@@ -29,6 +30,8 @@ public interface RestApi {
     @GET("forms.php")
     Call<Form> getForms(@Header("eventId") String eventId);
 
+    @GET("forms2.php")
+    Call<Quiz> getQuiz(@Header("eventId") String eventId);
 //    @GET("forms.php/{eventId}")
 //    Call<Form> getForms(@Path("eventId") String eventId);
 }

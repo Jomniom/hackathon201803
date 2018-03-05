@@ -15,22 +15,12 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class Comunicator {
-    public static final String KEY_HEADER_X_APP = "x-y";
-    public static String APP_KEY = "";
-    public static final int[] APP_ASCCII_KEY = {34, 78, 45, 54, 32, 32};
     private static Comunicator ourInstance = new Comunicator();
     private Retrofit retrofit;
     private RestApi service;
 
     public static Comunicator getInstance() {
-        APP_KEY = OtherUtils.getGluePass(APP_ASCCII_KEY);
         return ourInstance;
-    }
-
-    private String prepareUserAgentName() {
-        String orgUserAgent = System.getProperty("http.agent");
-        String fakeVersion = "fa." + OtherUtils.randomInt(10, 900) + "." + OtherUtils.randomInt(100, 900);
-        return orgUserAgent + " " + fakeVersion;
     }
 
     private Comunicator() {

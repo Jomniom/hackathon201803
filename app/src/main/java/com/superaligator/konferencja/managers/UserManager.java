@@ -11,6 +11,9 @@ import com.superaligator.konferencja.BuildConfig;
 import com.superaligator.konferencja.Config;
 import com.superaligator.konferencja.dbmodels.Event;
 import com.superaligator.konferencja.dbmodels.ChatQuestion;
+import com.superaligator.konferencja.dbmodels.Quiz;
+import com.superaligator.konferencja.dbmodels.QuizQuestion;
+import com.superaligator.konferencja.dbmodels.QuizQuestionAnswer;
 import com.superaligator.konferencja.models.Form;
 import com.superaligator.konferencja.models.FormAnswer;
 import com.superaligator.konferencja.models.FormQuestion;
@@ -77,7 +80,8 @@ public class UserManager {
         }
 
         Configuration dbConfiguration = new Configuration.Builder(ctx)
-                .setModelClasses(Event.class, ChatQuestion.class, Form.class, FormQuestion.class, FormAnswer.class)//manifest
+                .setModelClasses(Event.class, ChatQuestion.class, Form.class, FormQuestion.class, FormAnswer.class,
+                        Quiz.class, QuizQuestion.class, QuizQuestionAnswer.class)//manifest
                 .setDatabaseVersion(Config.BD_VERSION)
                 .setDatabaseName(dbName).create();
         ActiveAndroid.initialize(dbConfiguration);

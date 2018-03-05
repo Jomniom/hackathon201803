@@ -4,11 +4,9 @@ package com.superaligator.konferencja.utils;
 import android.content.Context;
 
 import com.superaligator.konferencja.definitions.EventType;
-import com.superaligator.konferencja.network.Comunicator;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -33,14 +31,14 @@ public class OtherUtils {
         }
     }
 
-    public static String prepareNotIn(List<String> arr){
+    public static String prepareNotIn(List<String> arr) {
         StringBuilder sb = new StringBuilder();
         sb.append("(");
         String s = null;
-        for(String el: arr){
-            if(s != null){
+        for (String el : arr) {
+            if (s != null) {
                 sb.append(s);
-            }else{
+            } else {
                 s = ",";
             }
             sb.append("?");
@@ -52,10 +50,10 @@ public class OtherUtils {
     public static String listJoin(List<String> arr, String glue) {
         StringBuilder sb = new StringBuilder();
         String s = null;
-        for(String el: arr){
-            if(s != null){
+        for (String el : arr) {
+            if (s != null) {
                 sb.append(s);
-            }else{
+            } else {
                 s = glue;
             }
             sb.append(el);
@@ -68,17 +66,6 @@ public class OtherUtils {
         return random.nextInt(max - min + 1) + min;
     }
 
-    public static String getXApp(String userAgent) {
-        if (Comunicator.getInstance().APP_KEY == null)
-            return null;
-
-        String tmpUserAgent = userAgent.substring(2, userAgent.length());
-        String phrase = userAgent + Comunicator.getInstance().APP_KEY + tmpUserAgent;
-        String tk = md5(phrase);
-        //2 znak zamien miejscami z 4
-        String res = zamianaMiejscami(tk, 2, 4);
-        return res;
-    }
 
     public static String md5(String in) {
         MessageDigest digest;
@@ -100,29 +87,11 @@ public class OtherUtils {
         return null;
     }
 
-    /**
-     * Zamienia miejscami 2 znaki
-     * Przykład ("krowa" 0, 2) -> orkwa
-     */
-    public static String zamianaMiejscami(String txt, int pos1, int pos2) {
-        if (txt == null)
-            return null;
-        if (pos1 > pos2)
-            throw new IllegalArgumentException("Bad parameters");
-
-        char[] txtChars = txt.toCharArray();
-        char z1 = txtChars[pos1];
-        txtChars[pos1] = txtChars[pos2];
-        txtChars[pos2] = z1;
-        return String.valueOf(txtChars);
-    }
-
-
-    public static String getGluePass(int[] arr) {
-        String ret = "";
-        for (int i = 0; i < arr.length; i++) {
-            ret += (char) arr[i];
+    public static int strToInt(String str, int def) {
+        try {
+            return Integer.parseInt(str);
+        } catch (Exception e) {
+            return def;
         }
-        return ret;
     }
 }

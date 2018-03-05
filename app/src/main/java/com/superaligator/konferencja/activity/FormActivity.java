@@ -53,19 +53,19 @@ public class FormActivity extends BaseUserActivity {
         title.setText(form.title);
 
         LinearLayout mainView = (LinearLayout) findViewById(R.id.llForm);
+        LayoutInflater inflater = (LayoutInflater) getBaseContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         List<FormQuestion> questions = form.getQuestions();
         for (ListIterator<FormQuestion> iter = questions.listIterator(); iter.hasNext(); ) {
             FormQuestion question = iter.next();
-            LayoutInflater inflater = (LayoutInflater) getBaseContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             LinearLayout v = (LinearLayout) inflater.inflate(R.layout.question, null);
             ((TextView) v.findViewById(R.id.textViewQuestion)).setText(question.question);
 
             List<FormAnswer> answers = question.getFormAnswers();
             for (ListIterator<FormAnswer> answersI = answers.listIterator(); answersI.hasNext(); ) {
                 final FormAnswer ans = answersI.next();
-                LayoutInflater inx = (LayoutInflater) getBaseContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                LinearLayout q = (LinearLayout) inx.inflate(R.layout.q, null);
+                //LayoutInflater inx = (LayoutInflater) getBaseContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                LinearLayout q = (LinearLayout) inflater.inflate(R.layout.q, null);
                 TextView t = q.findViewById(R.id.textVieAnswer);
                 t.setText(ans.answer);
                 t.setBackgroundColor(Color.parseColor("#22aa11"));

@@ -1,13 +1,13 @@
 <resources>
-    <string name="app_name">Hackaton Konferencja</string>
-    <string name="title_activity_login">Sign in</string>
+    <string name="app_name">Konfitura</string>
+    <string name="title_activity_login">Zaloguj</string>
     <string name="dialog_ladowania">Poczekaj...</string>
     <string name="enroll_description">Możesz wziąć udział w wydarzeniu. Aby to zrobić wprowadź kod wydarzenia i zarejestruj swoją obecność.</string>
     <string name="event_register">Zarejestruj w wydarzeniu</string>
     <string name="prompt_email">Email</string>
-    <string name="prompt_password">Password (optional)</string>
-    <string name="action_sign_in">Sign in or register</string>
-    <string name="action_sign_in_short">Sign in</string>
+    <string name="prompt_password">Hasło</string>
+    <string name="action_sign_in">Zaloguj lub zarejestruj</string>
+    <string name="action_sign_in_short">Zaloguj</string>
     <string name="error_invalid_email">This email address is invalid</string>
     <string name="error_invalid_password">This password is too short</string>
     <string name="error_incorrect_password">This password is incorrect</string>

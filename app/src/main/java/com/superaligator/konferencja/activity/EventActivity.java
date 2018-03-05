@@ -57,6 +57,19 @@ public class EventActivity extends BaseUserActivity {
                 showForms();
             }
         });
+        ((Button) findViewById(R.id.button3)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showQuiz();
+            }
+        });
+    }
+
+    private void showQuiz() {
+        Intent intent = new Intent(this, QuizActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.putExtra(QuizActivity.EXTRA_EVENT_ID, event.eventId);
+        startActivity(intent);
     }
 
     private void showForms() {
