@@ -28,6 +28,7 @@ public class UserManager {
     private String email = null;
     private String apiKey = null;
     private String userId = null;
+    private String id_token = null;
     private static UserManager instance = null;
 
     public UserManager(Context ctx) {
@@ -53,13 +54,17 @@ public class UserManager {
         userId = prefs.getString(PREFS_USER_ID, null);
     }
 
-    public boolean userLoggedIn(String apiKey, String email, String userId) {
-        if (apiKey.length() == 0 || email.length() == 0 || userId.length() == 0) {
+    public boolean userLoggedIn(String apiKey, String email, String userId, String id_token) {
+       /* if (apiKey.length() == 0 || email.length() == 0 || userId.length() == 0) {
             return false;
-        }
+        }*/
+       if (id_token == null || id_token.length() == 0) {
+           return false;
+       }
         UserManager.this.apiKey = apiKey;
         UserManager.this.email = email;
         UserManager.this.userId = userId;
+        UserManager.this.id_token = id_token;
         SharedPreferences.Editor sp = PreferenceManager.getDefaultSharedPreferences(ctx).edit();
         sp.putString(PREFS_API_KEY, apiKey);
         sp.putString(PREFS_EMAIL, email);
@@ -99,7 +104,7 @@ public class UserManager {
     }
 
     public boolean isLoggedIn() {
-        return (email != null && apiKey != null && email.length() > 0 && apiKey.length() > 0 && userId != null && userId.length() > 0);
+        return (email != null && email.length() > 0 && userId != null && userId.length() > 0);
     }
 
     public boolean logout() {
@@ -128,5 +133,9 @@ public class UserManager {
 
     public String getUserId() {
         return userId;
+    }
+
+    public String getId_token() {
+        return id_token;
     }
 }

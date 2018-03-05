@@ -62,8 +62,9 @@ public class Comunicator {
             Request originalRequest = chain.request();
             Request.Builder newBuilder = originalRequest.newBuilder();
             if (UserManager.getInstance().isLoggedIn()) {
-                newBuilder.addHeader("token", UserManager.getInstance().getApiKey());
-                newBuilder.addHeader("user_id", UserManager.getInstance().getUserId());
+//                newBuilder.addHeader("token", UserManager.getInstance().getApiKey());
+//                newBuilder.addHeader("user_id", UserManager.getInstance().getUserId());
+                newBuilder.addHeader("token_id", UserManager.getInstance().getId_token());
             }
 
             newBuilder.build();

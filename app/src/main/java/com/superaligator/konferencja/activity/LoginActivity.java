@@ -23,6 +23,7 @@ import android.widget.TextView;
 
 import com.superaligator.konferencja.R;
 import com.superaligator.konferencja.managers.UserManager;
+import com.superaligator.konferencja.models.LoginRequest;
 import com.superaligator.konferencja.models.LoginResponse;
 import com.superaligator.konferencja.network.Comunicator;
 
@@ -122,29 +123,32 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             mEmailView.setError(getString(R.string.error_field_required));
             focusView = mEmailView;
             cancel = true;
-        } else if (!isEmailValid(email)) {
+        }/* else if (!isEmailValid(email)) {
             mEmailView.setError(getString(R.string.error_invalid_email));
             focusView = mEmailView;
             cancel = true;
-        }
+        }*/
 
         if (cancel) {
             // There was an error; don't attempt login and focus the first
             // form field with an error.
             focusView.requestFocus();
         } else {
-            login();
+            login(email, password);
         }
     }
 
-    private void login() {
+    private void login(String email, String password) {
         if (loginCall != null) {
             loginCall.cancel();
             loginCall = null;
         }
 
         showProgress(true);
-        loginCall = Comunicator.getInstance().getApiService().login();
+        LoginRequest request = new LoginRequest();
+        request.setUsername(email);
+        request.setPassword(password);
+        loginCall = Comunicator.getInstance().getApiService().login(request);
         loginCall.enqueue(new Callback<LoginResponse>() {
             @Override
             public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
@@ -157,7 +161,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 UserManager.getInstance().userLoggedIn(
                         response.body().token,
                         response.body().email,
-                        response.body().userId
+                        response.body().userId,
+                        response.body().id_token
                 );
                 Intent intent = new Intent(LoginActivity.this, DashboardActivity.class);
                 LoginActivity.this.startActivity(intent);
