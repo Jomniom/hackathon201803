@@ -1,12 +1,16 @@
 package com.superaligator.konferencja.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 import com.superaligator.konferencja.R;
 import com.superaligator.konferencja.dbmodels.Event;
 import com.superaligator.konferencja.models.EnrollResponse;
@@ -23,6 +27,7 @@ public class EnrollActivity extends BaseUserActivity {
     TextView enrollInfoText;
     Button btnEnrollAction;
     EditText tvAccessCode;
+    IntentIntegrator integrator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,7 +49,15 @@ public class EnrollActivity extends BaseUserActivity {
         btnEnrollEvent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                enrollEvent();
+                enrollEvent(tvAccessCode.getText().toString());
+            }
+        });
+
+        Button btnRunScanner = findViewById(R.id.btnRunScanner);
+        btnRunScanner.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                runScanner();
             }
         });
 
@@ -55,6 +68,33 @@ public class EnrollActivity extends BaseUserActivity {
                 enrollAction();
             }
         });
+
+        integrator = new IntentIntegrator(this);
+        integrator.setPrompt("Panie zrób mnie Pan zdjęcie");
+        integrator.setCameraId(0);
+        //integrator.setDesiredBarcodeFormats(IntentIntegrator.QR_CODE_TYPES);
+        integrator.setBeepEnabled(false);
+        integrator.setBarcodeImageEnabled(true);
+    }
+
+    private void runScanner() {
+        integrator.initiateScan();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+        if (result != null) {
+            if (result.getContents() == null) {
+                Toast.makeText(this, "Nie znalezionon kodu", Toast.LENGTH_LONG).show();
+                //info.setText("nie znaleziono kodu");
+            } else {
+                Toast.makeText(this, "Znaleziono kod: " + result.getContents(), Toast.LENGTH_SHORT).show();
+                enrollEvent(result.getContents());
+            }
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
     }
 
     boolean actionSuccess = false;
@@ -69,13 +109,13 @@ public class EnrollActivity extends BaseUserActivity {
         enrollInfoLay.setVisibility(View.INVISIBLE);
     }
 
-    private void enrollEvent() {
+    private void enrollEvent(String code) {
         if (eventCall != null) {
             eventCall.cancel();
             eventCall = null;
         }
         showLoading();
-        eventCall = Comunicator.getInstance().getApiService().registerEvent();
+        eventCall = Comunicator.getInstance().getApiService().registerEvent(code);
         eventCall.enqueue(new Callback<EnrollResponse>() {
             @Override
             public void onResponse(Call<EnrollResponse> call, Response<EnrollResponse> response) {
@@ -90,6 +130,12 @@ public class EnrollActivity extends BaseUserActivity {
                 enrollInfoText.setText(R.string.event_success_info);
                 actionSuccess = true;
                 btnEnrollAction.setText(R.string.btn_event_success);
+                btnEnrollAction.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        //todo intent do wydarzenia z finish
+                    }
+                });
             }
 
             @Override

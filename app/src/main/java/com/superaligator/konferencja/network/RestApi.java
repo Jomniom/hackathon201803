@@ -20,8 +20,9 @@ public interface RestApi {
     @GET("events.php")
     Call<EventsResponse> events();
 
-    @GET("register_event.php")
-    Call<EnrollResponse> registerEvent();
+    @FormUrlEncoded
+    @POST("register_event.php")
+    Call<EnrollResponse> registerEvent(@Field("code") String code);
 
     @FormUrlEncoded
     @POST("chat.php")
@@ -32,6 +33,11 @@ public interface RestApi {
 
     @GET("forms2.php")
     Call<Quiz> getQuiz(@Header("eventId") String eventId);
-//    @GET("forms.php/{eventId}")
+
+    @FormUrlEncoded
+    @POST("forms2.php")
+    Call<Void> saveQuizQuestion(@Field("eventId") String eventId, @Field("quizId") long quizId, @Field("questionId") long questionId, @Field("answerId") long answerId);
+
+    //    @GET("forms.php/{eventId}")
 //    Call<Form> getForms(@Path("eventId") String eventId);
 }

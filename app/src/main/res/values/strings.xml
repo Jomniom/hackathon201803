@@ -6,7 +6,7 @@
     <string name="event_register">Zarejestruj w wydarzeniu</string>
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Hasło</string>
-    <string name="action_sign_in">Zaloguj lub zarejestruj</string>
+    <string name="action_sign_in">Zaloguj</string>
     <string name="action_sign_in_short">Zaloguj</string>
     <string name="error_invalid_email">This email address is invalid</string>
     <string name="error_invalid_password">This password is too short</string>
