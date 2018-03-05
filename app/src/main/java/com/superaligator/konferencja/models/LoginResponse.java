@@ -10,4 +10,8 @@ public class LoginResponse extends Response {
     public String email;
     @NonNull
     public String token;
+    @NonNull
+    public String id_token;
+
+
 }

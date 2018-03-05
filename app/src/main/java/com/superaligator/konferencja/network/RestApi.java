@@ -4,20 +4,25 @@ import com.superaligator.konferencja.dbmodels.Quiz;
 import com.superaligator.konferencja.models.EnrollResponse;
 import com.superaligator.konferencja.models.EventsResponse;
 import com.superaligator.konferencja.models.Form;
+import com.superaligator.konferencja.models.LoginRequest;
 import com.superaligator.konferencja.models.LoginResponse;
 
 import retrofit2.Call;
+import retrofit2.http.Body;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
+import retrofit2.http.Headers;
 import retrofit2.http.POST;
 
 public interface RestApi {
-    @POST("login.php")
-    Call<LoginResponse> login();
 
-    @GET("events.php")
+//    @FormUrlEncoded
+    @POST("api/authenticate")
+    Call<LoginResponse> login(@Body LoginRequest request);
+
+    @GET("api/events")
     Call<EventsResponse> events();
 
     @GET("register_event.php")
