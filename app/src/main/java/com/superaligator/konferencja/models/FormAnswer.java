@@ -1,6 +1,9 @@
 package com.superaligator.konferencja.models;
 
 
+import android.view.View;
+import android.widget.TextView;
+
 import com.activeandroid.Model;
 import com.activeandroid.annotation.Column;
 import com.activeandroid.annotation.Table;
@@ -18,6 +21,8 @@ public class FormAnswer extends Model {
     //relacja do question
     @Column(name = "questionId")
     String questionId;
+
+    //public TextView view;
 
     public static List<FormAnswer> getAnsewrsByQuestionId(String questionId) {
         return new Select()

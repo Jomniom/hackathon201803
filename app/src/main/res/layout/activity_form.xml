@@ -20,7 +20,6 @@
         app:layout_constraintVertical_bias="0.19999999">
 
         <LinearLayout
-            android:id="@+id/llForm"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
@@ -31,6 +30,18 @@
                 android:layout_height="wrap_content"
                 android:text=""
                 android:textSize="24sp" />
+
+            <LinearLayout
+                android:id="@+id/llForm"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"></LinearLayout>
+
+            <Button
+                android:id="@+id/button9"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Wyślij" />
         </LinearLayout>
     </ScrollView>
 

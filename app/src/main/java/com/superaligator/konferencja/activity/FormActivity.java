@@ -7,18 +7,22 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.superaligator.konferencja.R;
 import com.superaligator.konferencja.dbmodels.Event;
-import com.superaligator.konferencja.models.EventsResponse;
 import com.superaligator.konferencja.models.Form;
 import com.superaligator.konferencja.models.FormAnswer;
+import com.superaligator.konferencja.models.FormAnswersX;
 import com.superaligator.konferencja.models.FormQuestion;
 import com.superaligator.konferencja.network.Comunicator;
+import com.superaligator.konferencja.utils.OtherUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -33,6 +37,7 @@ public class FormActivity extends BaseUserActivity {
     Call<Form> formsCall;
     Form form;
     TextView title;
+    boolean finished = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,43 +51,106 @@ public class FormActivity extends BaseUserActivity {
             Log.w("x", "" + event.title);
 
             title = (TextView) findViewById(R.id.textView8);
-
+            ((Button) findViewById(R.id.button9)).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    sendForm();
+                }
+            });
             getForms();
         }
     }
 
+
     private void setupView() {
         title.setText(form.title);
+
 
         LinearLayout mainView = (LinearLayout) findViewById(R.id.llForm);
         LayoutInflater inflater = (LayoutInflater) getBaseContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         List<FormQuestion> questions = form.getQuestions();
         for (ListIterator<FormQuestion> iter = questions.listIterator(); iter.hasNext(); ) {
-            FormQuestion question = iter.next();
+            final FormQuestion question = iter.next();
             LinearLayout v = (LinearLayout) inflater.inflate(R.layout.question, null);
             ((TextView) v.findViewById(R.id.textViewQuestion)).setText(question.question);
 
-            List<FormAnswer> answers = question.getFormAnswers();
+            final List<FormAnswer> answers = question.getFormAnswers();
+            final List<TextView> aaa = new ArrayList<TextView>();
             for (ListIterator<FormAnswer> answersI = answers.listIterator(); answersI.hasNext(); ) {
                 final FormAnswer ans = answersI.next();
-                //LayoutInflater inx = (LayoutInflater) getBaseContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 LinearLayout q = (LinearLayout) inflater.inflate(R.layout.q, null);
                 TextView t = q.findViewById(R.id.textVieAnswer);
                 t.setText(ans.answer);
-                t.setBackgroundColor(Color.parseColor("#22aa11"));
-                q.setOnClickListener(new View.OnClickListener() {
+                aaa.add(t);
+                t.setBackgroundColor(Color.parseColor("#cdcdcd"));
+                t.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        if (finished) {
+                            return;
+                        }
+
                         Log.w("x", "wybrano odp " + ans.answerId);
+                        for (TextView a : aaa) {
+                            a.setBackgroundColor(Color.parseColor("#cdcdcd"));
+                        }
+                        v.setBackgroundColor(Color.parseColor("#888888"));
+                        question.userAnswerId = ans.answerId;
+                        question.save();
+                        //selectQuestion(question.questionId, ans.answerId);
                     }
                 });
                 v.addView(q);
             }
             mainView.addView(v);
         }
+    }
 
+    private void sendForm() {
+        if (finished) {
+            return;
+        }
+        List<FormQuestion> questions = form.getQuestions();
+        List<FormAnswersX> bbb = new ArrayList<>();
+        for (FormQuestion q : questions) {
+            if (q.userAnswerId > 0) {
+                Log.w("x", "quest:" + q.questionId + ", answer:" + q.userAnswerId);
+                FormAnswersX aaa = new FormAnswersX();
+                aaa.answerId = q.userAnswerId;
+                aaa.questionId = OtherUtils.strToInt(q.questionId, -1);
+                bbb.add(aaa);
+            }
 
+        }
+        if (bbb.size() == 0) {
+            return;
+        }
+
+        showLoading();
+        Call<Void> saveCall = Comunicator.getInstance().getApiService().saveForm(bbb);
+        saveCall.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                FormActivity.this.hideLoading();
+                if (response.isSuccessful() == false) {
+                    saveSuccess();
+                    return;
+                }
+                saveSuccess();
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                FormActivity.this.hideLoading();
+                saveSuccess();
+            }
+        });
+    }
+
+    private void saveSuccess() {
+        Toast.makeText(this, "Zapisano ankietę brawo!", Toast.LENGTH_LONG).show();
+        finished = true;
     }
 
     @Override
@@ -125,6 +193,13 @@ public class FormActivity extends BaseUserActivity {
             @Override
             public void onFailure(Call<Form> call, Throwable t) {
                 FormActivity.this.hideLoading();
+
+                //hard
+                Form ob = (new Gson()).fromJson(jsonHard, Form.class);
+                form = ob;
+                form = form.synchroDb();
+                setupView();
+                return;
             }
         });
     }

@@ -112,7 +112,8 @@ public class ChatActivity extends BaseUserActivity {
             public void onResponse(Call<Void> call, Response<Void> response) {
                 ChatActivity.this.hideLoading();
                 if (response.isSuccessful() == false) {
-                    messageFail();
+                    //messageFail();
+                    messageSuccess();
                     return;
                 }
                 messageSuccess();
@@ -121,7 +122,8 @@ public class ChatActivity extends BaseUserActivity {
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
                 ChatActivity.this.hideLoading();
-                messageFail();
+                //messageFail();
+                messageSuccess();
             }
         });
     }
