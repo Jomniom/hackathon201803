@@ -10,8 +10,10 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
 import com.superaligator.konferencja.R;
 import com.superaligator.konferencja.dbmodels.Event;
+import com.superaligator.konferencja.models.EventsResponse;
 import com.superaligator.konferencja.models.Form;
 import com.superaligator.konferencja.models.FormAnswer;
 import com.superaligator.konferencja.models.FormQuestion;
@@ -92,6 +94,9 @@ public class FormActivity extends BaseUserActivity {
         }
     }
 
+
+    private String jsonHard = "{\"eventId\":21,\"formId\":2421,\"title\":\"Ankieta Powitalna\",\"formQuestions\":[{\"question\":\"Czy lubisz kury?\",\"questionId\":333,\"formAnswers\":[{\"answer\":\"tak\",\"answerId\":2031},{\"answer\":\"nie\",\"answerId\":1221}]},{\"question\":\"Ile uszu ma kura?\",\"questionId\":444,\"formAnswers\":[{\"answer\":\"Ma duzo\",\"answerId\":431},{\"answer\":\"Ma ich wiele\",\"answerId\":5421},{\"answer\":\"Kura ma tylko jedno ucho\",\"answerId\":4321}]}]}";
+
     private void getForms() {
         if (formsCall != null) {
             formsCall.cancel();
@@ -104,6 +109,12 @@ public class FormActivity extends BaseUserActivity {
             public void onResponse(Call<Form> call, Response<Form> response) {
                 FormActivity.this.hideLoading();
                 if (response.isSuccessful() == false) {
+
+                    //hard
+                    Form ob = (new Gson()).fromJson(jsonHard, Form.class);
+                    form = ob;
+                    form = form.synchroDb();
+                    setupView();
                     return;
                 }
                 form = response.body();

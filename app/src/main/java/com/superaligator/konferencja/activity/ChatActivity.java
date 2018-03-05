@@ -15,6 +15,7 @@ import com.superaligator.konferencja.R;
 import com.superaligator.konferencja.adapters.ChatAdapter;
 import com.superaligator.konferencja.dbmodels.Event;
 import com.superaligator.konferencja.dbmodels.ChatQuestion;
+import com.superaligator.konferencja.models.ChatQuestionReq;
 import com.superaligator.konferencja.network.Comunicator;
 
 import java.util.Date;
@@ -106,7 +107,12 @@ public class ChatActivity extends BaseUserActivity {
             questionCall = null;
         }
         showLoading();
-       // questionCall = Comunicator.getInstance().getApiService().sendQuestion(editTextMessage.getText().toString(), event.eventId);
+        ChatQuestionReq q = new ChatQuestionReq();
+        //q.setDate(new Date());
+        q.setEventId(Long.valueOf(event.eventId));
+        q.setParticipantId(1001L);
+        q.setQuestion(editTextMessage.getText().toString());
+        questionCall = Comunicator.getInstance().getApiService().sendQuestion(q);
         questionCall.enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {

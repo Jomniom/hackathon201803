@@ -6,7 +6,7 @@ import java.util.Date;
  * Created by CI_KMANKA on 2018-03-05.
  */
 
-public class ChatQuestion {
+public class ChatQuestionReq {
 
     private String question;
     private Long eventId;

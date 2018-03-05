@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.github.lzyzsd.randomcolor.RandomColor;
 import com.google.gson.Gson;
@@ -58,6 +59,7 @@ public class QuizActivity extends BaseUserActivity implements onMessageWS {
             textView11 = (TextView) findViewById(R.id.textView11);
             llNoQuizzes = (LinearLayout) findViewById(R.id.llNoQuizzes);
             llNoQuizzes.setVisibility(View.GONE);
+            llquestionContainer = (LinearLayout) findViewById(R.id.llquestionContainer);
             llQuiz = (LinearLayout) findViewById(R.id.llQuiz);
             llQuiz.setVisibility(View.GONE);
             client = new OkHttpClient();
@@ -83,6 +85,10 @@ public class QuizActivity extends BaseUserActivity implements onMessageWS {
         if (quizCall != null) {
             quizCall.cancel();
             quizCall = null;
+        }
+        if (saveQuestionCall != null) {
+            saveQuestionCall.cancel();
+            saveQuestionCall = null;
         }
         socketClose();
     }
@@ -158,10 +164,9 @@ public class QuizActivity extends BaseUserActivity implements onMessageWS {
     }
 
     private void showQuestion(int questionId) {
-        llquestionContainer = (LinearLayout) findViewById(R.id.llquestionContainer);
         //wyczyść pojemnik na pytanie
-        int c =llquestionContainer.getChildCount();
-        Log.w("w", ""+c);
+        int c = llquestionContainer.getChildCount();
+        Log.w("w", "" + c);
         if (llquestionContainer.getChildCount() > 0) {
             llquestionContainer.removeAllViews();
             //llquestionContainer.chil
@@ -172,8 +177,8 @@ public class QuizActivity extends BaseUserActivity implements onMessageWS {
                 View v = buildQuestionView(quizQuestion);
                 llquestionContainer.addView(v);
                 //llquestionContainer.invalidate();
-               // llquestionContainer.setVisibility(View.GONE);
-               // llquestionContainer.setVisibility(View.VISIBLE);
+                // llquestionContainer.setVisibility(View.GONE);
+                // llquestionContainer.setVisibility(View.VISIBLE);
                 //llquestionContainer.removeAllViews();
                 llquestionContainer.refreshDrawableState();
 
@@ -187,7 +192,7 @@ public class QuizActivity extends BaseUserActivity implements onMessageWS {
 
     RandomColor randomColor = new RandomColor();
 
-    private View buildQuestionView(QuizQuestion quizQuestion) {
+    private View buildQuestionView(final QuizQuestion quizQuestion) {
         LayoutInflater inflater = (LayoutInflater) getBaseContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         LinearLayout v = (LinearLayout) inflater.inflate(R.layout.quiz_question, null);
         ((TextView) v.findViewById(R.id.textQuizQuestion)).setText(quizQuestion.text);
@@ -201,13 +206,60 @@ public class QuizActivity extends BaseUserActivity implements onMessageWS {
             q.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Log.w("x", "wybrano odp ");
-                    showQuestion(2);
+                    Log.w("x", "wybrano odp " + answer.id);
+                    //showQuestion(2);
+                    saveQuizQuestion(quizQuestion, answer);
                 }
             });
             v.addView(q);
         }
         return v;
+    }
+
+    Call<Void> saveQuestionCall;
+
+    private void saveQuizQuestion(QuizQuestion quizQuestion, QuizQuestionAnswer answer) {
+        if (saveQuestionCall != null) {
+            saveQuestionCall.cancel();
+            saveQuestionCall = null;
+        }
+        //showQuestion(2);
+        showLoading();
+        saveQuestionCall = Comunicator.getInstance().getApiService().saveQuizQuestion(event.eventId, quizQuestion.quizId, answer.quizQuestionId, answer.id);
+        saveQuestionCall.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                QuizActivity.this.hideLoading();
+                if (response.isSuccessful() == false) {
+                    saveQuizQuestionFail();
+                    return;
+                }
+
+                QuizActivity.this.saveQuizQuestionSuccess();
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                QuizActivity.this.hideLoading();
+                saveQuizQuestionFail();
+            }
+        });
+    }
+
+    private void saveQuizQuestionSuccess() {
+        //todo pokaz wkranu czekania na kolejne pytanie
+        //showQuestion(2);
+        LayoutInflater inflater = (LayoutInflater) getBaseContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        LinearLayout waitView = (LinearLayout) inflater.inflate(R.layout.wait_for_question, null);
+        if (llquestionContainer.getChildCount() > 0) {
+            llquestionContainer.removeAllViews();
+            //llquestionContainer.chil
+        }
+        llquestionContainer.addView(waitView);
+    }
+
+    private void saveQuizQuestionFail() {
+        Toast.makeText(this, "Błąd zapisywania odpowiedzi", Toast.LENGTH_LONG);
     }
 
     @Override

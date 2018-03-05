@@ -64,7 +64,7 @@ public class Comunicator {
             if (UserManager.getInstance().isLoggedIn()) {
 //                newBuilder.addHeader("token", UserManager.getInstance().getApiKey());
 //                newBuilder.addHeader("user_id", UserManager.getInstance().getUserId());
-                newBuilder.addHeader("token_id", UserManager.getInstance().getId_token());
+                newBuilder.addHeader("Authorization", "Bearer "  +UserManager.getInstance().getId_token());
             }
 
             newBuilder.build();
@@ -85,7 +85,7 @@ public class Comunicator {
              * logout by server
              */
             if (response.code() == 401) {
-                UserManager.getInstance().logout();
+                //UserManager.getInstance().logout();
                 return response;
             }
 
