@@ -5,8 +5,11 @@ import com.superaligator.konferencja.models.ChatQuestionReq;
 import com.superaligator.konferencja.models.EnrollResponse;
 import com.superaligator.konferencja.models.EventsResponse;
 import com.superaligator.konferencja.models.Form;
+import com.superaligator.konferencja.models.FormAnswersX;
 import com.superaligator.konferencja.models.LoginRequest;
 import com.superaligator.konferencja.models.LoginResponse;
+
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -32,6 +35,9 @@ public interface RestApi {
 //    @FormUrlEncoded
     @POST("/api/chat-question")
     Call<Void> sendQuestion(@Body ChatQuestionReq chatQuestionReq);
+
+    @POST("api/form")
+    Call<Void> saveForm(@Body List<FormAnswersX> formData);
 
     @GET("forms.php")
     Call<Form> getForms(@Header("eventId") String eventId);

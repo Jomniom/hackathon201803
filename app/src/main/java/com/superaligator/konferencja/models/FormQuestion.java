@@ -12,15 +12,15 @@ import java.util.List;
 @Table(name = "FormQuestions")
 public class FormQuestion extends Model {
     @Column(name = "questionId", unique = true)
-    String questionId;
+    public String questionId;
     //relacja do form
     @Column(name = "formId")
-    String formId;
+    public String formId;
     @Column(name = "question")
     public String question;
     //odpowiedz uzytkownika
     @Column(name = "userAnswerId")
-    String userAnswerId;
+    public int userAnswerId;
 
     //gson
     List<FormAnswer> formAnswers;
