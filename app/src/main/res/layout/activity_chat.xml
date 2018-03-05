@@ -65,7 +65,7 @@
             android:id="@+id/button5"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#7EC0EE"
+            android:layout_margin="6dp"
             android:text="Wyślij pytanie" />
 
     </LinearLayout>

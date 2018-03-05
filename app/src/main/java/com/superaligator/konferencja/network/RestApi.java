@@ -18,7 +18,7 @@ import retrofit2.http.POST;
 
 public interface RestApi {
 
-//    @FormUrlEncoded
+    //    @FormUrlEncoded
     @POST("api/authenticate")
     Call<LoginResponse> login(@Body LoginRequest request);
 
@@ -26,7 +26,7 @@ public interface RestApi {
     Call<EventsResponse> events();
 
     @FormUrlEncoded
-    @POST("register_event.php")
+    @POST("api/confirmParticipant")
     Call<EnrollResponse> registerEvent(@Field("code") String code);
 
     @FormUrlEncoded

@@ -85,7 +85,7 @@ public class Comunicator {
              * logout by server
              */
             if (response.code() == 401) {
-                UserManager.getInstance().logout();
+                //UserManager.getInstance().logout();
                 return response;
             }
 

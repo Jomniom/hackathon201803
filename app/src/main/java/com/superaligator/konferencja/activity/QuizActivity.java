@@ -59,6 +59,7 @@ public class QuizActivity extends BaseUserActivity implements onMessageWS {
             textView11 = (TextView) findViewById(R.id.textView11);
             llNoQuizzes = (LinearLayout) findViewById(R.id.llNoQuizzes);
             llNoQuizzes.setVisibility(View.GONE);
+            llquestionContainer = (LinearLayout) findViewById(R.id.llquestionContainer);
             llQuiz = (LinearLayout) findViewById(R.id.llQuiz);
             llQuiz.setVisibility(View.GONE);
             client = new OkHttpClient();
@@ -163,7 +164,6 @@ public class QuizActivity extends BaseUserActivity implements onMessageWS {
     }
 
     private void showQuestion(int questionId) {
-        llquestionContainer = (LinearLayout) findViewById(R.id.llquestionContainer);
         //wyczyść pojemnik na pytanie
         int c = llquestionContainer.getChildCount();
         Log.w("w", "" + c);
@@ -249,6 +249,13 @@ public class QuizActivity extends BaseUserActivity implements onMessageWS {
     private void saveQuizQuestionSuccess() {
         //todo pokaz wkranu czekania na kolejne pytanie
         //showQuestion(2);
+        LayoutInflater inflater = (LayoutInflater) getBaseContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        LinearLayout waitView = (LinearLayout) inflater.inflate(R.layout.wait_for_question, null);
+        if (llquestionContainer.getChildCount() > 0) {
+            llquestionContainer.removeAllViews();
+            //llquestionContainer.chil
+        }
+        llquestionContainer.addView(waitView);
     }
 
     private void saveQuizQuestionFail() {

@@ -21,6 +21,7 @@ import com.superaligator.konferencja.models.FormQuestion;
 import java.io.File;
 
 public class UserManager {
+    private static final String PREFS_USER_TOKEN = "dfgsdfgsd";
     private Context ctx;
     private final String PREFS_API_KEY = "prefs_api_key";
     private final String PREFS_EMAIL = "prefs_email";
@@ -50,25 +51,27 @@ public class UserManager {
     private void readSharedPrefs() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
         email = prefs.getString(PREFS_EMAIL, null);
-        apiKey = prefs.getString(PREFS_API_KEY, null);
+        // apiKey = prefs.getString(PREFS_API_KEY, null);
         userId = prefs.getString(PREFS_USER_ID, null);
+        id_token = prefs.getString(PREFS_USER_TOKEN, "braak");
     }
 
     public boolean userLoggedIn(String apiKey, String email, String userId, String id_token) {
        /* if (apiKey.length() == 0 || email.length() == 0 || userId.length() == 0) {
             return false;
         }*/
-       if (id_token == null || id_token.length() == 0) {
-           return false;
-       }
-        UserManager.this.apiKey = apiKey;
+//       if (id_token == null || id_token.length() == 0) {
+//           return false;
+//       }
+        // UserManager.this.apiKey = apiKey;
         UserManager.this.email = email;
         UserManager.this.userId = userId;
         UserManager.this.id_token = id_token;
         SharedPreferences.Editor sp = PreferenceManager.getDefaultSharedPreferences(ctx).edit();
-        sp.putString(PREFS_API_KEY, apiKey);
+        // sp.putString(PREFS_API_KEY, apiKey);
         sp.putString(PREFS_EMAIL, email);
         sp.putString(PREFS_USER_ID, userId);
+        sp.putString(PREFS_USER_TOKEN, id_token);
         sp.apply();
         switchDatabase(userId);
         return true;
@@ -112,9 +115,10 @@ public class UserManager {
         sp.remove(PREFS_API_KEY);
         sp.remove(PREFS_EMAIL);
         sp.remove(PREFS_USER_ID);
+        sp.remove(PREFS_USER_TOKEN);
 
         if (sp.commit()) {
-            apiKey = null;
+            //apiKey = null;
             email = null;
             userId = null;
             //sendBroadcastLogout();
@@ -136,6 +140,8 @@ public class UserManager {
     }
 
     public String getId_token() {
+        if (id_token == null)
+            return "nie ma?";
         return id_token;
     }
 }

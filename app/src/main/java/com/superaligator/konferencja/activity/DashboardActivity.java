@@ -9,6 +9,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 
+import com.google.gson.Gson;
 import com.superaligator.konferencja.R;
 import com.superaligator.konferencja.adapters.EventsAdapter;
 import com.superaligator.konferencja.dbmodels.Event;
@@ -56,6 +57,11 @@ public class DashboardActivity extends BaseUserActivity implements AdapterView.O
         listView.setOnItemClickListener(this);
         listView.setAdapter(adapter);
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         updateEvents();
     }
 
@@ -68,27 +74,41 @@ public class DashboardActivity extends BaseUserActivity implements AdapterView.O
         }
     }
 
+    private String hardJson = "{\"events\":[{\"eventId\":2012,\"title\":\"Konferencja lotnicza\",\"type\":\"CONFERENCE\",\"description\":\"Spotkanie dla lotnikow\",\"accessCode\":\"394fd9\"},{\"eventId\":1203,\"title\":\"Gala Drwali 2018\",\"type\":\"CONFERENCE\",\"description\":\"Poczestunek dla drwali\",\"accessCode\":\"h8alw32\"},{\"eventId\":1653,\"title\":\"Nagrody Ornitologiczne 2018\",\"type\":\"CONFERENCE\",\"description\":\"Spotkanie wielbicieli ptakow\",\"accessCode\":\"bo0932s\"},{\"eventId\":16111,\"title\":\"Doroczne Zebranie Piekarzy\",\"type\":\"CONFERENCE\",\"description\":\"Spotkanie piekarzy i smakoszy pieczywa\",\"accessCode\":\"dn5m321\"}]}";
+
     private void updateEvents() {
         if (eventsCall != null) {
             eventsCall.cancel();
             eventsCall = null;
         }
-        showLoading();
+        //showLoading();
         eventsCall = Comunicator.getInstance().getApiService().events();
         eventsCall.enqueue(new Callback<EventsResponse>() {
             @Override
             public void onResponse(Call<EventsResponse> call, Response<EventsResponse> response) {
                 DashboardActivity.this.hideLoading();
                 if (response.isSuccessful() == false) {
+
+                    //hardkod wydarzen
+                    EventsResponse ob = (new Gson()).fromJson( hardJson, EventsResponse.class);
+                    Event.synchroEvents(ob, new SynchoEventsListener() {
+                        @Override
+                        public void OnSynchroEnd() {
+                            DashboardActivity.this.refreshList();
+                        }
+                    });
                     return;
                 }
                 Log.w("x", "liczba pobranych wydarzeń: " + response.body().events.size());
-                Event.synchroEvents(response.body(), new SynchoEventsListener() {
-                    @Override
-                    public void OnSynchroEnd() {
-                        DashboardActivity.this.refreshList();
-                    }
-                });
+
+
+
+//                Event.synchroEvents(response.body(), new SynchoEventsListener() {
+//                    @Override
+//                    public void OnSynchroEnd() {
+//                        DashboardActivity.this.refreshList();
+//                    }
+//                });
             }
 
             @Override
