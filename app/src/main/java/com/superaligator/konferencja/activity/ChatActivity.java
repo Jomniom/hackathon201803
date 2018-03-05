@@ -106,7 +106,7 @@ public class ChatActivity extends BaseUserActivity {
             questionCall = null;
         }
         showLoading();
-        questionCall = Comunicator.getInstance().getApiService().sendQuestion(editTextMessage.getText().toString(), event.eventId);
+       // questionCall = Comunicator.getInstance().getApiService().sendQuestion(editTextMessage.getText().toString(), event.eventId);
         questionCall.enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {

@@ -1,6 +1,7 @@
 package com.superaligator.konferencja.network;
 
 import com.superaligator.konferencja.dbmodels.Quiz;
+import com.superaligator.konferencja.models.ChatQuestion;
 import com.superaligator.konferencja.models.EnrollResponse;
 import com.superaligator.konferencja.models.EventsResponse;
 import com.superaligator.konferencja.models.Form;
@@ -28,9 +29,9 @@ public interface RestApi {
     @GET("register_event.php")
     Call<EnrollResponse> registerEvent();
 
-    @FormUrlEncoded
-    @POST("chat.php")
-    Call<Void> sendQuestion(@Field("message") String message, @Field("eventId") String eventId);
+//    @FormUrlEncoded
+    @POST("/api/chat-question")
+    Call<Void> sendQuestion(@Body ChatQuestion chatQuestion);
 
     @GET("forms.php")
     Call<Form> getForms(@Header("eventId") String eventId);

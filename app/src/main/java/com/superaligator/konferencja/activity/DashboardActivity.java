@@ -13,8 +13,11 @@ import com.superaligator.konferencja.R;
 import com.superaligator.konferencja.adapters.EventsAdapter;
 import com.superaligator.konferencja.dbmodels.Event;
 import com.superaligator.konferencja.interfaces.SynchoEventsListener;
+import com.superaligator.konferencja.models.ChatQuestion;
 import com.superaligator.konferencja.models.EventsResponse;
 import com.superaligator.konferencja.network.Comunicator;
+
+import java.util.Date;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -57,6 +60,7 @@ public class DashboardActivity extends BaseUserActivity implements AdapterView.O
         listView.setAdapter(adapter);
 
         updateEvents();
+        chatTest();
     }
 
     @Override
@@ -67,6 +71,22 @@ public class DashboardActivity extends BaseUserActivity implements AdapterView.O
             eventsCall = null;
         }
     }
+
+    private void chatTest() {
+        if (eventsCall != null) {
+            eventsCall.cancel();
+            eventsCall = null;
+        }
+        ChatQuestion q = new ChatQuestion();
+        q.setDate(new Date());
+        q.setEventId(1L);
+        q.setParticipantId(1L);
+        q.setQuestion("o co chodzi?");
+
+        Comunicator.getInstance().getApiService().sendQuestion(q);
+
+    }
+
 
     private void updateEvents() {
         if (eventsCall != null) {
