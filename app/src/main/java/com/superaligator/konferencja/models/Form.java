@@ -24,7 +24,7 @@ public class Form extends Model {
     }
 
     //gson - parse respnse
-    List<FormQuestion> formQuestions;
+    public  List<FormQuestion> formQuestions;
 
     public Form synchroDb() {
         Form f = new Select()

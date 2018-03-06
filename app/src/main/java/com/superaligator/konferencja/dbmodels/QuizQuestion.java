@@ -8,7 +8,7 @@ import java.util.List;
 
 @Table(name = "QuizQuestion")
 public class QuizQuestion extends Model {
-    @Column(name = "questionId")
+    @Column(name = "formQuestionId")
     public Long id;
     @Column(name = "quizId")
     public Long quizId;

@@ -77,7 +77,7 @@ public class DashboardActivity extends BaseUserActivity implements AdapterView.O
         }
     }
 
-    private String hardJson = "{\"events\":[{\"eventId\":2012,\"title\":\"Konferencja lotnicza\",\"type\":\"CONFERENCE\",\"description\":\"Spotkanie dla lotnikow\",\"accessCode\":\"394fd9\"},{\"eventId\":1203,\"title\":\"Gala Drwali 2018\",\"type\":\"CONFERENCE\",\"description\":\"Poczestunek dla drwali\",\"accessCode\":\"h8alw32\"},{\"eventId\":1653,\"title\":\"Nagrody Ornitologiczne 2018\",\"type\":\"CONFERENCE\",\"description\":\"Spotkanie wielbicieli ptakow\",\"accessCode\":\"bo0932s\"},{\"eventId\":16111,\"title\":\"Doroczne Zebranie Piekarzy\",\"type\":\"CONFERENCE\",\"description\":\"Spotkanie piekarzy i smakoszy pieczywa\",\"accessCode\":\"dn5m321\"}]}";
+    private String hardJson = "{\"events\":[{\"eventId\":2012,\"title\":\"Konwent działkowców\",\"type\":\"CONFERENCE\",\"description\":\"Spotkanie aktywnych dziadków ogrodowych\",\"accessCode\":\"394fd9\"},{\"eventId\":1203,\"title\":\"Gala Drwali 2018\",\"type\":\"CONFERENCE\",\"description\":\"Poczestunek dla drwali\",\"accessCode\":\"h8alw32\"},{\"eventId\":1653,\"title\":\"Nagrody Ornitologiczne 2018\",\"type\":\"CONFERENCE\",\"description\":\"Spotkanie wielbicieli ptakow\",\"accessCode\":\"bo0932s\"},{\"eventId\":16111,\"title\":\"Doroczne Zebranie Piekarzy\",\"type\":\"CONFERENCE\",\"description\":\"Spotkanie piekarzy i smakoszy pieczywa\",\"accessCode\":\"dn5m321\"}]}";
 
     private void chatTest() {
         if (eventsCall != null) {
@@ -133,6 +133,14 @@ public class DashboardActivity extends BaseUserActivity implements AdapterView.O
             @Override
             public void onFailure(Call<EventsResponse> call, Throwable t) {
                 DashboardActivity.this.hideLoading();
+                //hardkod wydarzen
+                EventsResponse ob = (new Gson()).fromJson( hardJson, EventsResponse.class);
+                Event.synchroEvents(ob, new SynchoEventsListener() {
+                    @Override
+                    public void OnSynchroEnd() {
+                        DashboardActivity.this.refreshList();
+                    }
+                });
                 if (call.isCanceled()) {
                     Log.e("x", "request was cancelled");
                 } else {

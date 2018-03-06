@@ -52,6 +52,7 @@
             style="@android:style/Widget.Material.EditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_margin="6dp"
             android:ems="10"
             android:gravity="top|left"
             android:inputType="textMultiLine"

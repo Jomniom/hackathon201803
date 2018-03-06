@@ -2,11 +2,11 @@ package com.superaligator.konferencja.activity;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -20,6 +20,7 @@ import com.superaligator.konferencja.dbmodels.QuizQuestion;
 import com.superaligator.konferencja.dbmodels.QuizQuestionAnswer;
 import com.superaligator.konferencja.interfaces.onMessageWS;
 import com.superaligator.konferencja.managers.QuizWebSocketListener;
+import com.superaligator.konferencja.managers.UserManager;
 import com.superaligator.konferencja.network.Comunicator;
 import com.superaligator.konferencja.utils.OtherUtils;
 
@@ -38,7 +39,7 @@ public class QuizActivity extends BaseUserActivity implements onMessageWS {
     Call<Quiz> quizCall;
     TextView name, description, textView11;
     Quiz quiz;
-    LinearLayout llNoQuizzes, llQuiz, llquestionContainer;
+    LinearLayout llNoQuizzes, llQuiz, llquestionContainer, llWaiting, llfinish;
     private OkHttpClient client;
     WebSocket webSocket;
     Request request;
@@ -49,6 +50,17 @@ public class QuizActivity extends BaseUserActivity implements onMessageWS {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_quiz);
 
+        ((Button) findViewById(R.id.btnTest)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                nextText();
+            }
+        });
+        llWaiting = (LinearLayout) findViewById(R.id.llWaiting);
+        llWaiting.setVisibility(View.GONE);
+
+        llfinish = (LinearLayout) findViewById(R.id.llfinish);
+        llfinish.setVisibility(View.GONE);
 
         Intent i = getIntent();
         String eventId = i.getStringExtra(EXTRA_EVENT_ID);
@@ -64,8 +76,12 @@ public class QuizActivity extends BaseUserActivity implements onMessageWS {
             llQuiz.setVisibility(View.GONE);
             client = new OkHttpClient();
         }
+        String tok = UserManager.getInstance().getId_token();
+        request = new Request.Builder().url("http://192.168.200.52:8080/showKonkurs/11/22/websocket?access_token=" + tok)
+                .addHeader("Accept", "application/json")
+                .addHeader("Content-type", "application/json")
+                .build();
 
-        request = new Request.Builder().url("ws://echo.websocket.org").build();
         socketListener = new QuizWebSocketListener(this);
 //        byte[] decodedString = Base64.decode(strBase64, Base64.DEFAULT);
 //        Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
@@ -93,6 +109,8 @@ public class QuizActivity extends BaseUserActivity implements onMessageWS {
         socketClose();
     }
 
+    String hardQuiz = "{ \"id\" : 1, \"name\" : \"Super konkurs\", \"description\" : \"Konkurs przygotowany na potrzeby przygotowania do konkursu\", \"eventId\" : 1, \"questions\" : [ { \"id\" : 1, \"quizId\" : 1, \"text\" : \"Czy jesteś pewny?\", \"answers\" : [ { \"id\" : 1, \"quizQuestionId\" : 1, \"text\" : \"Tak, bardzo\", \"correct\" : false }, { \"id\" : 2, \"quizQuestionId\" : 1, \"text\" : \"Chyba tak\", \"correct\" : false }, { \"id\" : 3, \"quizQuestionId\" : 1, \"text\" : \"Raczej nie\", \"correct\" : false }, { \"id\" : 4, \"quizQuestionId\" : 1, \"text\" : \"Tak, tak tak\", \"correct\" : true } ] }, { \"id\" : 2, \"quizId\" : 1, \"text\" : \"Który ssak z rodziny psowatych zapada zimą w stan hibernacji\", \"answers\" : [ { \"id\" : 1, \"quizQuestionId\" : 2, \"text\" : \"pies\", \"correct\" : false }, { \"id\" : 2, \"quizQuestionId\" : 2, \"text\" : \"kot\", \"correct\" : false }, { \"id\" : 3, \"quizQuestionId\" : 2, \"text\" : \"jenot\", \"correct\" : true }, { \"id\" : 4, \"quizQuestionId\" : 2, \"text\" : \"koń\", \"correct\" : false } ] } ] }";
+
     private void getQuiz() {
         if (quizCall != null) {
             quizCall.cancel();
@@ -105,7 +123,11 @@ public class QuizActivity extends BaseUserActivity implements onMessageWS {
             public void onResponse(Call<Quiz> call, Response<Quiz> response) {
                 QuizActivity.this.hideLoading();
                 if (response.isSuccessful() == false) {
-                    QuizActivity.this.noQuiz();
+
+                    //QuizActivity.this.noQuiz();
+                    //hard
+                    quiz = (new Gson()).fromJson(hardQuiz, Quiz.class);
+                    QuizActivity.this.setupView();
                     return;
                 }
                 quiz = response.body();
@@ -117,7 +139,10 @@ public class QuizActivity extends BaseUserActivity implements onMessageWS {
             @Override
             public void onFailure(Call<Quiz> call, Throwable t) {
                 QuizActivity.this.hideLoading();
-                QuizActivity.this.noQuiz();
+                //QuizActivity.this.noQuiz();
+                //hard
+                quiz = (new Gson()).fromJson(hardQuiz, Quiz.class);
+                QuizActivity.this.setupView();
             }
         });
     }
@@ -147,21 +172,27 @@ public class QuizActivity extends BaseUserActivity implements onMessageWS {
             textView11.setVisibility(View.VISIBLE);
             return;
         }
-        showQuestion(1);//test
+        //showQuestion(1);//test
+        //QuizActivity.this.saveQuizQuestionSuccess();
+        llWaiting.setVisibility(View.VISIBLE);
         socketOpen();
     }
 
-
+int x = 0;
     @Override
     public void onMessage(WebSocket webSocket, String text) {
-        if (text == null) {
+        x+=1;
+        if (x < 1) {
             return;
         }
+        nextText();
         //pokaz pytanie n..
         int questionId = OtherUtils.strToInt(text, -1);
-        questionId = 1;//-test
-        //showQuestion(questionId);
+        //showQuestion(formQuestionId);
+        //formQuestionId = 1;//-test
+        //showQuestion(formQuestionId);
     }
+
 
     private void showQuestion(int questionId) {
         //wyczyść pojemnik na pytanie
@@ -174,6 +205,7 @@ public class QuizActivity extends BaseUserActivity implements onMessageWS {
         //wyszukaj pytanie
         for (QuizQuestion quizQuestion : quiz.questions) {
             if (quizQuestion.id == questionId) {
+                currentQuestionIndex += 1;
                 View v = buildQuestionView(quizQuestion);
                 llquestionContainer.addView(v);
                 //llquestionContainer.invalidate();
@@ -208,6 +240,7 @@ public class QuizActivity extends BaseUserActivity implements onMessageWS {
                 public void onClick(View v) {
                     Log.w("x", "wybrano odp " + answer.id);
                     //showQuestion(2);
+
                     saveQuizQuestion(quizQuestion, answer);
                 }
             });
@@ -231,7 +264,8 @@ public class QuizActivity extends BaseUserActivity implements onMessageWS {
             public void onResponse(Call<Void> call, Response<Void> response) {
                 QuizActivity.this.hideLoading();
                 if (response.isSuccessful() == false) {
-                    saveQuizQuestionFail();
+                    //saveQuizQuestionFail();
+                    QuizActivity.this.saveQuizQuestionSuccess();
                     return;
                 }
 
@@ -241,21 +275,34 @@ public class QuizActivity extends BaseUserActivity implements onMessageWS {
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
                 QuizActivity.this.hideLoading();
-                saveQuizQuestionFail();
+                //saveQuizQuestionFail();
+                QuizActivity.this.saveQuizQuestionSuccess();
             }
         });
     }
 
+    int currentQuestionIndex = 0;
+
     private void saveQuizQuestionSuccess() {
-        //todo pokaz wkranu czekania na kolejne pytanie
-        //showQuestion(2);
-        LayoutInflater inflater = (LayoutInflater) getBaseContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        LinearLayout waitView = (LinearLayout) inflater.inflate(R.layout.wait_for_question, null);
         if (llquestionContainer.getChildCount() > 0) {
             llquestionContainer.removeAllViews();
-            //llquestionContainer.chil
         }
-        llquestionContainer.addView(waitView);
+
+        if (currentQuestionIndex >= quiz.questions.size()) {
+            llfinish.setVisibility(View.VISIBLE);
+            llWaiting.setVisibility(View.GONE);
+        } else {
+            llWaiting.setVisibility(View.VISIBLE);
+        }
+        //todo pokaz wkranu czekania na kolejne pytanie
+        //showQuestion(2);
+//        LayoutInflater inflater = (LayoutInflater) getBaseContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+//        LinearLayout waitView = (LinearLayout) inflater.inflate(R.layout.wait_for_question, null);
+//        if (llquestionContainer.getChildCount() > 0) {
+//            llquestionContainer.removeAllViews();
+//            //llquestionContainer.chil
+//        }
+//        llquestionContainer.addView(waitView);
     }
 
     private void saveQuizQuestionFail() {
@@ -264,22 +311,20 @@ public class QuizActivity extends BaseUserActivity implements onMessageWS {
 
     @Override
     public void onMessage(WebSocket webSocket, ByteString bytes) {
-
+        Log.w("x", "onMessage");
     }
 
     @Override
     public void onOpen(WebSocket webSocket, okhttp3.Response response) {
-        //webSocket.send(
-        for (QuizQuestion quizQuestion : quiz.questions) {
-            if (quizQuestion.answerId > 0) {
-                //odpowiedz zostala udzielona
-                continue;
-            }
-            //(new Gson).
-            webSocket.send("{quizId:" + quiz.eventId + "}");
-            return;
-        }
+
+        Log.w("x", "onMessage");
     }
 
+    int test = 0;
 
+    private void nextText() {
+        //int formQuestionId = OtherUtils.strToInt(text, -1);
+        test += 1;
+        showQuestion(test);
+    }
 }

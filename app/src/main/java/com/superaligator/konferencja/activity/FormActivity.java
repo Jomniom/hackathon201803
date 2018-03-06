@@ -69,40 +69,85 @@ public class FormActivity extends BaseUserActivity {
         LinearLayout mainView = (LinearLayout) findViewById(R.id.llForm);
         LayoutInflater inflater = (LayoutInflater) getBaseContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-        List<FormQuestion> questions = form.getQuestions();
-        for (ListIterator<FormQuestion> iter = questions.listIterator(); iter.hasNext(); ) {
-            final FormQuestion question = iter.next();
-            LinearLayout v = (LinearLayout) inflater.inflate(R.layout.question, null);
-            ((TextView) v.findViewById(R.id.textViewQuestion)).setText(question.question);
 
-            final List<FormAnswer> answers = question.getFormAnswers();
-            final List<TextView> aaa = new ArrayList<TextView>();
-            for (ListIterator<FormAnswer> answersI = answers.listIterator(); answersI.hasNext(); ) {
-                final FormAnswer ans = answersI.next();
-                LinearLayout q = (LinearLayout) inflater.inflate(R.layout.q, null);
-                TextView t = q.findViewById(R.id.textVieAnswer);
-                t.setText(ans.answer);
-                aaa.add(t);
-                t.setBackgroundColor(Color.parseColor("#cdcdcd"));
-                t.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (finished) {
-                            return;
-                        }
 
-                        Log.w("x", "wybrano odp " + ans.answerId);
-                        for (TextView a : aaa) {
-                            a.setBackgroundColor(Color.parseColor("#cdcdcd"));
+
+
+//        List<FormQuestion> questions = form.getQuestions();
+//        for (ListIterator<FormQuestion> iter = questions.listIterator(); iter.hasNext(); ) {
+//            final FormQuestion question = iter.next();
+//            LinearLayout v = (LinearLayout) inflater.inflate(R.layout.question, null);
+//            ((TextView) v.findViewById(R.id.textViewQuestion)).setText(question.question);
+
+//            final List<FormAnswer> answers = question.formAnswers;
+//            final List<TextView> aaa = new ArrayList<TextView>();
+//            for (ListIterator<FormAnswer> answersI = answers.listIterator(); answersI.hasNext(); ) {
+//                final FormAnswer ans = answersI.next();
+//                LinearLayout q = (LinearLayout) inflater.inflate(R.layout.q, null);
+//                TextView t = q.findViewById(R.id.textVieAnswer);
+//                t.setText(ans.answer);
+//                aaa.add(t);
+//                t.setBackgroundColor(Color.parseColor("#cdcdcd"));
+//                t.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        if (finished) {
+//                            return;
+//                        }
+//
+//                        Log.w("x", "wybrano odp " + ans.answerId);
+//                        for (TextView a : aaa) {
+//                            a.setBackgroundColor(Color.parseColor("#cdcdcd"));
+//                        }
+//                        v.setBackgroundColor(Color.parseColor("#888888"));
+//                        question.userAnswerId = ans.answerId;
+//                        question.save();
+//                        //selectQuestion(question.formQuestionId, ans.formQustionAnswerId);
+//                    }
+//                });
+//                v.addView(q);
+//            }
+            //-----------------------------------------------------
+            //List<FormQuestion> questions = form.formQuestions
+            for (final FormQuestion question : form.formQuestions) {
+                //final FormQuestion question = iter.next();
+                LinearLayout v = (LinearLayout) inflater.inflate(R.layout.question, null);
+                ((TextView) v.findViewById(R.id.textViewQuestion)).setText(question.question);
+
+                final List<FormAnswer> answers = question.formAnswers;
+                final List<TextView> aaa = new ArrayList<TextView>();
+                for (ListIterator<FormAnswer> answersI = answers.listIterator(); answersI.hasNext(); ) {
+                    final FormAnswer ans = answersI.next();
+                    LinearLayout q = (LinearLayout) inflater.inflate(R.layout.q, null);
+                    TextView t = q.findViewById(R.id.textVieAnswer);
+                    t.setText(ans.answer);
+                    aaa.add(t);
+                    t.setBackgroundColor(Color.parseColor("#cdcdcd"));
+                    t.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if (finished) {
+                                return;
+                            }
+
+                            Log.w("x", "wybrano odp " + ans.answerId);
+                            for (TextView a : aaa) {
+                                a.setBackgroundColor(Color.parseColor("#cdcdcd"));
+                            }
+                            v.setBackgroundColor(Color.parseColor("#888888"));
+                            question.userAnswerId = ans.answerId;
+                            //question.save();
+                            //selectQuestion(question.formQuestionId, ans.formQustionAnswerId);
                         }
-                        v.setBackgroundColor(Color.parseColor("#888888"));
-                        question.userAnswerId = ans.answerId;
-                        question.save();
-                        //selectQuestion(question.questionId, ans.answerId);
-                    }
-                });
-                v.addView(q);
-            }
+                    });
+                    v.addView(q);
+                }
+            //-----------------------------------------------------
+
+
+
+
+
             mainView.addView(v);
         }
     }
@@ -117,8 +162,8 @@ public class FormActivity extends BaseUserActivity {
             if (q.userAnswerId > 0) {
                 Log.w("x", "quest:" + q.questionId + ", answer:" + q.userAnswerId);
                 FormAnswersX aaa = new FormAnswersX();
-                aaa.answerId = q.userAnswerId;
-                aaa.questionId = OtherUtils.strToInt(q.questionId, -1);
+                aaa.formQustionAnswerId = q.userAnswerId;
+                aaa.formQuestionId = OtherUtils.strToInt(q.questionId, -1);
                 bbb.add(aaa);
             }
 
@@ -163,7 +208,7 @@ public class FormActivity extends BaseUserActivity {
     }
 
 
-    private String jsonHard = "{\"eventId\":21,\"formId\":2421,\"title\":\"Ankieta Powitalna\",\"formQuestions\":[{\"question\":\"Czy lubisz kury?\",\"questionId\":333,\"formAnswers\":[{\"answer\":\"tak\",\"answerId\":2031},{\"answer\":\"nie\",\"answerId\":1221}]},{\"question\":\"Ile uszu ma kura?\",\"questionId\":444,\"formAnswers\":[{\"answer\":\"Ma duzo\",\"answerId\":431},{\"answer\":\"Ma ich wiele\",\"answerId\":5421},{\"answer\":\"Kura ma tylko jedno ucho\",\"answerId\":4321}]}]}";
+    private String jsonHard = "{\"eventId\":21,\"formId\":2421,\"title\":\"Ankieta Powitalna\",\"formQuestions\":[{\"question\":\"Czy lubisz kury?\",\"formQuestionId\":333,\"formAnswers\":[{\"answer\":\"tak\",\"formQustionAnswerId\":2031},{\"answer\":\"nie\",\"formQustionAnswerId\":1221}]},{\"question\":\"Ile uszu ma kura?\",\"formQuestionId\":444,\"formAnswers\":[{\"answer\":\"Ma duzo\",\"formQustionAnswerId\":431},{\"answer\":\"Ma ich wiele\",\"formQustionAnswerId\":5421},{\"answer\":\"Kura ma tylko jedno ucho\",\"formQustionAnswerId\":4321}]}]}";
 
     private void getForms() {
         if (formsCall != null) {
@@ -181,12 +226,12 @@ public class FormActivity extends BaseUserActivity {
                     //hard
                     Form ob = (new Gson()).fromJson(jsonHard, Form.class);
                     form = ob;
-                    form = form.synchroDb();
+                    //form = form.synchroDb();
                     setupView();
                     return;
                 }
                 form = response.body();
-                form = form.synchroDb();
+                //form = form.synchroDb();
                 setupView();
             }
 
@@ -197,7 +242,7 @@ public class FormActivity extends BaseUserActivity {
                 //hard
                 Form ob = (new Gson()).fromJson(jsonHard, Form.class);
                 form = ob;
-                form = form.synchroDb();
+                //form = form.synchroDb();
                 setupView();
                 return;
             }

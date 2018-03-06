@@ -47,7 +47,7 @@ public interface RestApi {
 
     @FormUrlEncoded
     @POST("forms2.php")
-    Call<Void> saveQuizQuestion(@Field("eventId") String eventId, @Field("quizId") long quizId, @Field("questionId") long questionId, @Field("answerId") long answerId);
+    Call<Void> saveQuizQuestion(@Field("eventId") String eventId, @Field("quizId") long quizId, @Field("formQuestionId") long questionId, @Field("formQustionAnswerId") long answerId);
 
     //    @GET("forms.php/{eventId}")
 //    Call<Form> getForms(@Path("eventId") String eventId);

@@ -11,7 +11,7 @@ import java.util.List;
 
 @Table(name = "FormQuestions")
 public class FormQuestion extends Model {
-    @Column(name = "questionId", unique = true)
+    @Column(name = "formQuestionId", unique = true)
     public String questionId;
     //relacja do form
     @Column(name = "formId")
@@ -23,7 +23,7 @@ public class FormQuestion extends Model {
     public int userAnswerId;
 
     //gson
-    List<FormAnswer> formAnswers;
+    public List<FormAnswer> formAnswers;
 
     public static List<FormQuestion> getFormQuestionsByFormId(String formId) {
         return new Select()

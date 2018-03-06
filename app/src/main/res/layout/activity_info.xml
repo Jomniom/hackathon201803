@@ -12,7 +12,7 @@
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="40dp"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -20,24 +20,58 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.19999999">
 
-        <TextView
-            android:id="@+id/textView5"
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="title"
-            android:textSize="22sp" />
-        <TextView
-            android:id="@+id/textView6"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="description"
-            android:textSize="14sp" />
+            android:layout_height="match_parent">
 
-        <TextView
-            android:id="@+id/textView7"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="program"
-            android:textSize="14sp" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/textView5"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="title"
+                    android:textSize="22sp" />
+
+                <TextView
+                    android:id="@+id/textView6"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="description"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="Lokalizacja"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="Gospodarstwo Ekologiczne „Pod Szczęśliwą Truskawką”\nul. Marmolady 15\n08-123 Dżembki\nPowiat łowicki" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="Agenda spotkania:"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:id="@+id/textView12"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="\n9:45 – 10:30 Rejestracja gości\n\n10:30 – 10:45 Otwarcie\n\n10:45 – 12:00 Słodkiego miłego życia czyli ile cukru w którym słoiku\n\n12:00 – 12:15 Herbatka z konfiturą\n\n12:15 – 14:00 Technika mieszania i metody przeciwdziałania przypaleniu\n\n14:00 – 14:30 Słodko lub wytrawnie czyli coś na ząb\n\n14:30 – 14:45 Pobudzająca moc fruktozy – konkurs z nagrodami\n\n14:45 – 16:00 Wręczenie wyróżnień „Wykwintny słoik”\n\n16:00 – 16:30 Konferencja prasowa – wywiady z wyróżnionymi" />
+            </LinearLayout>
+        </ScrollView>
+
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>

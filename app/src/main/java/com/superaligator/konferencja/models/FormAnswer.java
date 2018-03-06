@@ -15,11 +15,11 @@ import java.util.List;
 public class FormAnswer extends Model {
     @Column(name = "answer")
     public String answer;
-    @Column(name = "answerId")
+    @Column(name = "formQustionAnswerId")
     public int answerId;
 
     //relacja do question
-    @Column(name = "questionId")
+    @Column(name = "formQuestionId")
     String questionId;
 
     //public TextView view;
@@ -27,7 +27,7 @@ public class FormAnswer extends Model {
     public static List<FormAnswer> getAnsewrsByQuestionId(String questionId) {
         return new Select()
                 .from(FormAnswer.class)
-                .where("questionId = ?", questionId)
+                .where("formQuestionId = ?", questionId)
                 .execute();
     }
 }

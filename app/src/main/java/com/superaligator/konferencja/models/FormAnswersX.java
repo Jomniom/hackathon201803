@@ -2,6 +2,7 @@ package com.superaligator.konferencja.models;
 
 
 public class FormAnswersX {
-    public int questionId;
-    public int answerId;
+    // [{"formQustionAnswerId":1221,"formQuestionId":333}]
+    public int formQuestionId;
+    public int formQustionAnswerId;
 }
